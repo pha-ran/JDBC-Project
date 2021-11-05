@@ -10,7 +10,7 @@ public class Q2 {
 			+ "FROM (EMPLOYEE AS E LEFT OUTER JOIN EMPLOYEE AS S ON E.Super_ssn = S.Ssn) JOIN DEPARTMENT ON E.Dno = Dnumber ";
 	
 	public static void ShowEmployeeAll(Connection con) {
-		Q1.ShowEmployee(con);
+		// Q1.ShowEmployee(con);
 	}
 	
 	public static void ShowEmployeeDpart(Connection con, String s) {

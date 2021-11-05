@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.table.DefaultTableModel;
+
 public class Q1 {
-	public static void ShowEmployee(Connection con) {
+	public void ShowEmployee(Connection con, DefaultTableModel model) {
 		try {
 			Statement stm = con.createStatement();
 			String query = "SELECT * "
@@ -34,6 +36,9 @@ public class Q1 {
 		        				+ Salary + "  "
 		        				+ supervisor + "  "
 		        				+ department);
+		        
+		        Object[] data = {name,Bdate, Address, Sex, Salary, supervisor, department};
+		        model.addRow(data);
 			}
 			
 			// 수행 후 해제
