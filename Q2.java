@@ -3,6 +3,7 @@ package jdbc_2021_team_project;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -10,7 +11,7 @@ public class Q2 {
 	static String baseQuery = "SELECT * "
 			+ "FROM (EMPLOYEE AS E LEFT OUTER JOIN EMPLOYEE AS S ON E.Super_ssn = S.Ssn) JOIN DEPARTMENT ON E.Dno = Dnumber ";
 	
-	public void ShowEmployeeDpart(DefaultTableModel model, String s) {
+	public void ShowEmployeeDpart(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -21,7 +22,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model);
+			printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -39,7 +40,7 @@ public class Q2 {
 		}
 	}
 	
-	public void ShowEmployeeSex(DefaultTableModel model, String s) {
+	public void ShowEmployeeSex(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -50,7 +51,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model);
+			printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -68,7 +69,7 @@ public class Q2 {
 		}
 	}
 	
-	public void ShowEmployeeSal(DefaultTableModel model, String s) {
+	public void ShowEmployeeSal(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -79,7 +80,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model);
+			printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -97,7 +98,7 @@ public class Q2 {
 		}
 	}
 	
-	public void ShowEmployeeBirth(DefaultTableModel model, String s) {
+	public void ShowEmployeeBirth(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -109,7 +110,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model);
+			printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -127,7 +128,7 @@ public class Q2 {
 		}
 	}
 	
-	public void ShowEmployeeSuper(DefaultTableModel model, String s) {
+	public void ShowEmployeeSuper(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -138,7 +139,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model);
+			printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -156,7 +157,7 @@ public class Q2 {
 		}
 	}
 	
-	public void printResult(ResultSet rs, DefaultTableModel model) {
+	public void printResult(ResultSet rs, DefaultTableModel model, boolean[] isSelected) {
 		try {
 			// 테이블의 기존 데이터 삭제
 			for (int i = 0; i < model.getRowCount();) {
@@ -177,7 +178,15 @@ public class Q2 {
 		        }
 		        String department = rs.getString("Dname");
 		        
-		        Object[] data = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
+		        Object[] dataList = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
+		        Vector<Object> data = new Vector<Object>();
+		        data.add(false); // isSelected의 첫번째는 true인데 행 체크박스는 false여야함
+		        for (int i = 1; i <= 8; i++) { // 두 번째 행부터 설정
+		        	if (isSelected[i]) {
+		        		data.add(dataList[i]);
+		        	}
+		        }
+		        
 		        model.addRow(data);
 		    }
 		} catch (SQLException e) {

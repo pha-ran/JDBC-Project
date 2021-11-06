@@ -18,6 +18,9 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -49,7 +52,6 @@ public class Main {
 	private JCheckBox salaryCheckBox;
 	private JCheckBox supervisorCheckBox;
 	private JCheckBox departmentCheckBox;
-	private Object[][] data = new Object[][] {{false, null, null, null, null, null, null, null, null}};
 	private String[] columnNames = new String[] { "선택", "NAME", "SSN", "BDATE", "ADDRESS", "SEX", "SALARY", "SUPERVISOR", "DEPARTMENT" };
 	private JTable table;
 	private DefaultTableModel model;
@@ -275,7 +277,7 @@ public class Main {
 				
 				model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 				
-				int index = rangeCombo.getSelectedIndex();	// 검색 범위 설정
+				int index = rangeCombo.getSelectedIndex();	// 검색 범위에 따른 API 호출
 				switch(index) {
 				case 0:	// 전체 검색
 					Q1 q1 = new Q1();
@@ -284,37 +286,38 @@ public class Main {
 					
 				case 1:	// 부서 검색
 					Q2 q2d = new Q2();
-					q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem());
+					q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 2:	// 성별 검색
 					Q2 q2sex = new Q2();
-					q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem());
+					q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 3:	// 연봉 검색
 					Q2 q2sal = new Q2();
-					q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText());
+					q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText(), isSelected);
 					break;
 					
-				case 4:
+				case 4: // 생월 검색
 					Q2 q2b = new Q2();
-					q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem());
+					q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem(), isSelected);
 					break;
 					
-				case 5:
+				case 5:	// 부하직원 검색
 					Q2 q2sup = new Q2();
-					q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText());
+					q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText(), isSelected);
 					break;
 					
 				default:
+					// model.fireTableDataChanged();
 					break;
 				}
 			}
 		});
 		npanel_2.add(searchButton);
 		
-		model = new DefaultTableModel(data, columnNames) {
+		model = new DefaultTableModel(null, columnNames) {
 			private static final long serialVersionUID = 1L;
 			// 테이블 원소 더블클릭 후 수정 금지
 			public boolean isCellEditable(int i, int c){
@@ -359,7 +362,7 @@ public class Main {
 		tempLabel = new JLabel("0");
 		spanel_2.add(tempLabel);
 		
-		updateLabel = new JLabel("수정 : ");
+		updateLabel = new JLabel("선택한 데이터 수정 : ");
 		spanel_2.add(updateLabel);
 		
 		updateCombo = new JComboBox(updateComboName);
@@ -378,4 +381,40 @@ public class Main {
 		deleteButton = new JButton("선택한 데이터 삭제");
 		spanel_2.add(deleteButton);
 	}
+	
+	/*
+	private class TableCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
+
+		private static final long serialVersionUID = 1L;
+
+		public TableCell() {
+			cellBox = new JCheckBox();
+			
+			cellBox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println(table.getValueAt(table.getSelectedRow(), 1));
+				}
+			});
+		}
+		
+		@Override
+		public Object getCellEditorValue() {
+			return cellBox;
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			cellBox.setSelected(((Boolean)value).booleanValue());
+			cellBox.setHorizontalAlignment(JLabel.CENTER);
+			return cellBox;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			return cellBox;
+		}
+	}
+	*/
 }
