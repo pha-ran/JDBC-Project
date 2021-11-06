@@ -1,6 +1,5 @@
 package jdbc_2021_team_project;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,12 +7,20 @@ import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 
 public class Q1 {
-	public void ShowEmployee(Connection con, DefaultTableModel model) {
+	public void ShowEmployee(DefaultTableModel model) {
 		try {
-			Statement stm = con.createStatement();
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
+			Statement stm = db.getConnection().createStatement();
 			String query = "SELECT * "
 						+ "FROM (EMPLOYEE AS E LEFT OUTER JOIN EMPLOYEE AS S ON E.Super_ssn = S.Ssn) JOIN DEPARTMENT ON E.Dno = Dnumber";
 			ResultSet rs = stm.executeQuery(query);
+			
+			// 테이블의 기존 데이터 삭제
+			for (int i = 0; i < model.getRowCount();) {
+				model.removeRow(0);
+			}
 			
 			while (rs.next()) {
 		        String name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
@@ -28,16 +35,7 @@ public class Q1 {
 		        }
 		        String department = rs.getString("Dname");
 		        
-		        System.out.println(name + "  "
-		        				+ Ssn + "  "
-		        				+ Bdate + "  "
-		        				+ Address + "  "
-		        				+ Sex + "  "
-		        				+ Salary + "  "
-		        				+ supervisor + "  "
-		        				+ department);
-		        
-		        Object[] data = {name,Bdate, Address, Sex, Salary, supervisor, department};
+		        Object[] data = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
 		        model.addRow(data);
 			}
 			
@@ -50,6 +48,7 @@ public class Q1 {
 				}
 			}
 			
+			db.DisConnect(); // 연결 해제
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
