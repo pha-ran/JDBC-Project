@@ -1,6 +1,11 @@
 package jdbc_2021_team_project;
 
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,6 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 
 public class Main {
 
@@ -22,32 +28,48 @@ public class Main {
 	private JPanel npanel;
 	private Box nverticalBox;
 	private JPanel npanel_1;
-	String[] comboName = {"전체", "부서", "성별", "연봉", "생일", "부하직원"};
-	JComboBox combo;
+	private String[] rangeComboName = {"전체", "부서", "성별", "연봉", "생일", "부하직원"};
+	private JComboBox rangeCombo;
+	private String[] departmentComboName = {"Headquarters", "Administration", "Research"};
+	private JComboBox departmentCombo;
+	private String[] sexComboName = {"M", "F"};
+	private JComboBox sexCombo;
+	private JTextField salaryTextField;
+	private String[] bdateComboName = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+	private JComboBox bdateCombo;
+	private JTextField juniorTextField;
 	private JPanel npanel_2;
 	private JLabel rangeLabel;
 	private JLabel attLabel;
-	private JCheckBox NameCheckBox;
-	private JCheckBox SsnCheckBox;
-	private JCheckBox BdateCheckBox;
-	private JCheckBox AddressCheckBox;
-	private JCheckBox SexCheckBox;
-	private JCheckBox SalaryCheckBox;
-	private JCheckBox SupervisorCheckBox;
-	private JCheckBox DepartmentCheckBox;
-	Object[][] data = new Object[][] {{false, null, null, null, null, null, null, null, null}};
-	String[] columnNames = new String[] { "선택", "NAME", "SSN", "BDATE", "ADDRESS", "SEX", "SALARY", "SUPERVISOR", "DEPARTMENT" };
+	private JCheckBox nameCheckBox;
+	private JCheckBox ssnCheckBox;
+	private JCheckBox bdateCheckBox;
+	private JCheckBox addressCheckBox;
+	private JCheckBox sexCheckBox;
+	private JCheckBox salaryCheckBox;
+	private JCheckBox supervisorCheckBox;
+	private JCheckBox departmentCheckBox;
+	private Object[][] data = new Object[][] {{false, null, null, null, null, null, null, null, null}};
+	private String[] columnNames = new String[] { "선택", "NAME", "SSN", "BDATE", "ADDRESS", "SEX", "SALARY", "SUPERVISOR", "DEPARTMENT" };
 	private JTable table;
 	private DefaultTableModel model;
 	private JScrollPane scrollPane;
-	DefaultTableCellRenderer dcr;
-	JCheckBox cellBox;
+	private DefaultTableCellRenderer dcr;
+	private JCheckBox cellBox;
 	private Box sverticalBox;
 	private JPanel spanel_1;
 	private JPanel spanel_2;
 	private JLabel selectedLabel;
 	private JLabel countLabel;
-	private JButton SearchButton;
+	private JButton searchButton;
+	private JLabel tempLabel;
+	private JLabel updateLabel;
+	private String[] updateComboName = {"Address", "Sex", "Salary"};
+	private JComboBox updateCombo;
+	private JTextField textField;
+	private JButton updateButton;
+	private JButton addButton;
+	private JButton deleteButton;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -65,6 +87,14 @@ public class Main {
 	// 생성자, 이벤트 설정
 	public Main() {
 		initialize();
+		
+		rangeCombo.setSelectedIndex(0);
+		rangeCombo.setSelectedIndex(1);
+		rangeCombo.setSelectedIndex(2);
+		rangeCombo.setSelectedIndex(3);
+		rangeCombo.setSelectedIndex(4);
+		rangeCombo.setSelectedIndex(5);
+		rangeCombo.setSelectedIndex(0);
 	}
 
 	// 화면 구성
@@ -79,14 +109,113 @@ public class Main {
 		nverticalBox = Box.createVerticalBox();
 		npanel.add(nverticalBox);
 		
-		npanel_1 = new JPanel();
+		npanel_1 = new JPanel((LayoutManager) new FlowLayout(FlowLayout.LEFT));
 		nverticalBox.add(npanel_1);
 		
 		rangeLabel = new JLabel("검색 범위");
 		npanel_1.add(rangeLabel);
 		
-		combo = new JComboBox(comboName);
-		npanel_1.add(combo);
+		rangeCombo = new JComboBox(rangeComboName);
+		rangeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				int index = cb.getSelectedIndex();
+				
+				// 전체 VIsible
+				departmentCombo.setVisible(true);
+				sexCombo.setVisible(true);
+				salaryTextField.setVisible(true);
+				bdateCombo.setVisible(true);
+				juniorTextField.setVisible(true);
+				
+				switch (index) {
+				case 0:	// 전체 선택
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(false);
+					break;
+					
+				case 1: // 부서 선택
+					departmentCombo.setVisible(true);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(false);
+					
+					departmentCombo.setSelectedIndex(0);
+					break;
+					
+				case 2: // 성별 선택
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(true);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(false);
+					
+					sexCombo.setSelectedIndex(0);
+					break;
+					
+				case 3: // 연봉 선택
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(true);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(false);
+					
+					salaryTextField.setText("0");
+					break;
+					
+				case 4: // 생일 선택
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(true);
+					juniorTextField.setVisible(false);
+					
+					bdateCombo.setSelectedIndex(0);
+					break;
+					
+				case 5: // 부하직원 선택
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(true);
+					
+					juniorTextField.setText("0");
+					break;
+					
+				default:
+					departmentCombo.setVisible(false);
+					sexCombo.setVisible(false);
+					salaryTextField.setVisible(false);
+					bdateCombo.setVisible(false);
+					juniorTextField.setVisible(false);
+					break;
+				}
+			}
+		});
+		npanel_1.add(rangeCombo);
+		
+		departmentCombo = new JComboBox(departmentComboName);
+		npanel_1.add(departmentCombo);
+		
+		sexCombo = new JComboBox(sexComboName);
+		npanel_1.add(sexCombo);
+		
+		salaryTextField = new JTextField();
+		npanel_1.add(salaryTextField);
+		salaryTextField.setColumns(10);
+		
+		bdateCombo = new JComboBox(bdateComboName);
+		npanel_1.add(bdateCombo);
+		
+		juniorTextField = new JTextField();
+		npanel_1.add(juniorTextField);
+		juniorTextField.setColumns(10);
 		
 		npanel_2 = new JPanel();
 		nverticalBox.add(npanel_2);
@@ -94,40 +223,46 @@ public class Main {
 		attLabel = new JLabel("검색 항목");
 		npanel_2.add(attLabel);
 		
-		NameCheckBox = new JCheckBox("Name");
-		NameCheckBox.setSelected(true);
-		npanel_2.add(NameCheckBox);
+		nameCheckBox = new JCheckBox("Name");
+		nameCheckBox.setSelected(true);
+		npanel_2.add(nameCheckBox);
 		
-		SsnCheckBox = new JCheckBox("Ssn");
-		SsnCheckBox.setSelected(true);
-		npanel_2.add(SsnCheckBox);
+		ssnCheckBox = new JCheckBox("Ssn");
+		ssnCheckBox.setSelected(true);
+		npanel_2.add(ssnCheckBox);
 		
-		BdateCheckBox = new JCheckBox("Bdate");
-		BdateCheckBox.setSelected(true);
-		npanel_2.add(BdateCheckBox);
+		bdateCheckBox = new JCheckBox("Bdate");
+		bdateCheckBox.setSelected(true);
+		npanel_2.add(bdateCheckBox);
 		
-		AddressCheckBox = new JCheckBox("Address");
-		AddressCheckBox.setSelected(true);
-		npanel_2.add(AddressCheckBox);
+		addressCheckBox = new JCheckBox("Address");
+		addressCheckBox.setSelected(true);
+		npanel_2.add(addressCheckBox);
 		
-		SexCheckBox = new JCheckBox("Sex");
-		SexCheckBox.setSelected(true);
-		npanel_2.add(SexCheckBox);
+		sexCheckBox = new JCheckBox("Sex");
+		sexCheckBox.setSelected(true);
+		npanel_2.add(sexCheckBox);
 		
-		SalaryCheckBox = new JCheckBox("Salary");
-		SalaryCheckBox.setSelected(true);
-		npanel_2.add(SalaryCheckBox);
+		salaryCheckBox = new JCheckBox("Salary");
+		salaryCheckBox.setSelected(true);
+		npanel_2.add(salaryCheckBox);
 		
-		SupervisorCheckBox = new JCheckBox("Supervisor");
-		SupervisorCheckBox.setSelected(true);
-		npanel_2.add(SupervisorCheckBox);
+		supervisorCheckBox = new JCheckBox("Supervisor");
+		supervisorCheckBox.setSelected(true);
+		npanel_2.add(supervisorCheckBox);
 		
-		DepartmentCheckBox = new JCheckBox("Department");
-		DepartmentCheckBox.setSelected(true);
-		npanel_2.add(DepartmentCheckBox);
+		departmentCheckBox = new JCheckBox("Department");
+		departmentCheckBox.setSelected(true);
+		npanel_2.add(departmentCheckBox);
 		
-		SearchButton = new JButton("검색");
-		npanel_2.add(SearchButton);
+		searchButton = new JButton("검색");
+		searchButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		npanel_2.add(searchButton);
 		
 		model = new DefaultTableModel(data, columnNames);
 		table = new JTable(model);
@@ -165,5 +300,27 @@ public class Main {
 		
 		countLabel = new JLabel("인원수 : ");
 		spanel_2.add(countLabel);
+		
+		tempLabel = new JLabel("0");
+		spanel_2.add(tempLabel);
+		
+		updateLabel = new JLabel("수정 : ");
+		spanel_2.add(updateLabel);
+		
+		updateCombo = new JComboBox(updateComboName);
+		spanel_2.add(updateCombo);
+		
+		textField = new JTextField();
+		spanel_2.add(textField);
+		textField.setColumns(10);
+		
+		updateButton = new JButton("UPDATE");
+		spanel_2.add(updateButton);
+		
+		addButton = new JButton("새로운 데이터 추가");
+		spanel_2.add(addButton);
+		
+		deleteButton = new JButton("선택한 데이터 삭제");
+		spanel_2.add(deleteButton);
 	}
 }
