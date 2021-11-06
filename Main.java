@@ -89,12 +89,6 @@ public class Main {
 		initialize();
 		
 		rangeCombo.setSelectedIndex(0);
-		rangeCombo.setSelectedIndex(1);
-		rangeCombo.setSelectedIndex(2);
-		rangeCombo.setSelectedIndex(3);
-		rangeCombo.setSelectedIndex(4);
-		rangeCombo.setSelectedIndex(5);
-		rangeCombo.setSelectedIndex(0);
 	}
 
 	// 화면 구성
@@ -259,12 +253,47 @@ public class Main {
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				int index = rangeCombo.getSelectedIndex();
+				switch(index) {
+				case 0:
+					Q1 q1 = new Q1();
+					q1.ShowEmployee(model);
+					break;
+					
+				case 1:
+					Q2 q2 = new Q2();
+					q2.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem());
+					break;
+					
+				case 2:
+					System.out.println("성별 검색");
+					break;
+					
+				case 3:
+					System.out.println("연봉 검색");
+					break;
+					
+				case 4:
+					System.out.println("생일 검색");
+					break;
+					
+				case 5:
+					System.out.println("부하직원 검색");
+					break;
+					
+				default:
+					break;
+				}
 			}
 		});
 		npanel_2.add(searchButton);
 		
-		model = new DefaultTableModel(data, columnNames);
+		model = new DefaultTableModel(data, columnNames) {
+			private static final long serialVersionUID = 1L;
+			// 테이블 원소 더블클릭 후 수정 금지
+			public boolean isCellEditable(int i, int c){
+				return false;
+			}};
 		table = new JTable(model);
 		dcr = new DefaultTableCellRenderer(){
 			private static final long serialVersionUID = 1L;

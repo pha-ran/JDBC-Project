@@ -5,30 +5,42 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.table.DefaultTableModel;
+
 public class Q2 {
 	static String baseQuery = "SELECT * "
 			+ "FROM (EMPLOYEE AS E LEFT OUTER JOIN EMPLOYEE AS S ON E.Super_ssn = S.Ssn) JOIN DEPARTMENT ON E.Dno = Dnumber ";
 	
-	public static void ShowEmployeeAll(Connection con) {
-		// Q1.ShowEmployee(con);
-	}
-	
-	public static void ShowEmployeeDpart(Connection con, String s) {
+	public void ShowEmployeeDpart(DefaultTableModel model, String s) {
 		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
 			String query = baseQuery + "WHERE Dname = ?";
-			PreparedStatement pstm = con.prepareStatement(query);
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
 			pstm.setString(1, s);
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs);
+			printResult(rs, model);
+			
+			// 수행 후 해제
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			db.DisConnect(); // 연결 해제
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public static void ShowEmployeeSex(Connection con, String s) {
+	public void ShowEmployeeSex(Connection con, String s) {
 		try {
 			String query = baseQuery + "WHERE E.Sex = ?";
 			PreparedStatement pstm = con.prepareStatement(query);
@@ -36,14 +48,14 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs);
+			//printResult(rs);
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public static void ShowEmployeeSal(Connection con, int i) {
+	public void ShowEmployeeSal(Connection con, int i) {
 		try {
 			String query = baseQuery + "WHERE E.Salary > ?";
 			PreparedStatement pstm = con.prepareStatement(query);
@@ -51,14 +63,14 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs);
+			//printResult(rs);
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public static void ShowEmployeeBirth(Connection con, String i) {
+	public void ShowEmployeeBirth(Connection con, String i) {
 		try {
 			String query = baseQuery + "WHERE E.Bdate LIKE ?";
 			PreparedStatement pstm = con.prepareStatement(query);
@@ -67,14 +79,14 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs);
+			//printResult(rs);
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public static void ShowEmployeeSuper(Connection con, String s) {
+	public void ShowEmployeeSuper(Connection con, String s) {
 		try {
 			String query = baseQuery + "WHERE E.Super_ssn = ?";
 			PreparedStatement pstm = con.prepareStatement(query);
@@ -82,15 +94,20 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs);
+			//printResult(rs);
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public static void printResult(ResultSet rs) {
+	public void printResult(ResultSet rs, DefaultTableModel model) {
 		try {
+			// 테이블의 기존 데이터 삭제
+			for (int i = 0; i < model.getRowCount();) {
+				model.removeRow(0);
+			}
+			
 			while (rs.next()) {
 				String name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
 		        String Ssn = rs.getString("E.Ssn");
@@ -104,6 +121,7 @@ public class Q2 {
 		        }
 		        String department = rs.getString("Dname");
 		        
+		        /*
 		        System.out.println(name + "  "
 		        				+ Ssn + "  "
 		        				+ Bdate + "  "
@@ -112,6 +130,10 @@ public class Q2 {
 		        				+ Salary + "  "
 		        				+ supervisor + "  "
 		        				+ department);
+		        				*/
+		        
+		        Object[] data = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
+		        model.addRow(data);
 		    }
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
