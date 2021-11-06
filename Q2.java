@@ -1,6 +1,5 @@
 package jdbc_2021_team_project;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,61 +39,117 @@ public class Q2 {
 		}
 	}
 	
-	public void ShowEmployeeSex(Connection con, String s) {
+	public void ShowEmployeeSex(DefaultTableModel model, String s) {
 		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
 			String query = baseQuery + "WHERE E.Sex = ?";
-			PreparedStatement pstm = con.prepareStatement(query);
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
 			pstm.setString(1, s);
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			//printResult(rs);
+			printResult(rs, model);
+			
+			// 수행 후 해제
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+						
+			db.DisConnect(); // 연결 해제
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
 	}
 	
-	public void ShowEmployeeSal(Connection con, int i) {
+	public void ShowEmployeeSal(DefaultTableModel model, String s) {
 		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
 			String query = baseQuery + "WHERE E.Salary > ?";
-			PreparedStatement pstm = con.prepareStatement(query);
-			pstm.setInt(1, i);
-			
-			ResultSet rs = pstm.executeQuery();
-			
-			//printResult(rs);
-		} catch (SQLException e) {
-			System.out.println("연결 실패");
-			e.printStackTrace();
-		}
-	}
-	
-	public void ShowEmployeeBirth(Connection con, String i) {
-		try {
-			String query = baseQuery + "WHERE E.Bdate LIKE ?";
-			PreparedStatement pstm = con.prepareStatement(query);
-			
-			pstm.setString(1, "_____"+i+"___");
-			
-			ResultSet rs = pstm.executeQuery();
-			
-			//printResult(rs);
-		} catch (SQLException e) {
-			System.out.println("연결 실패");
-			e.printStackTrace();
-		}
-	}
-	
-	public void ShowEmployeeSuper(Connection con, String s) {
-		try {
-			String query = baseQuery + "WHERE E.Super_ssn = ?";
-			PreparedStatement pstm = con.prepareStatement(query);
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
 			pstm.setString(1, s);
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			//printResult(rs);
+			printResult(rs, model);
+			
+			// 수행 후 해제
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+									
+			db.DisConnect(); // 연결 해제
+		} catch (SQLException e) {
+			System.out.println("연결 실패");
+			e.printStackTrace();
+		}
+	}
+	
+	public void ShowEmployeeBirth(DefaultTableModel model, String s) {
+		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
+			String query = baseQuery + "WHERE E.Bdate LIKE ?";
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
+			
+			pstm.setString(1, "_____"+s+"___");
+			
+			ResultSet rs = pstm.executeQuery();
+			
+			printResult(rs, model);
+			
+			// 수행 후 해제
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+									
+			db.DisConnect(); // 연결 해제
+		} catch (SQLException e) {
+			System.out.println("연결 실패");
+			e.printStackTrace();
+		}
+	}
+	
+	public void ShowEmployeeSuper(DefaultTableModel model, String s) {
+		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
+			String query = baseQuery + "WHERE E.Super_ssn = ?";
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
+			pstm.setString(1, s);
+			
+			ResultSet rs = pstm.executeQuery();
+			
+			printResult(rs, model);
+			
+			// 수행 후 해제
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+									
+			db.DisConnect(); // 연결 해제
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
@@ -108,6 +163,7 @@ public class Q2 {
 				model.removeRow(0);
 			}
 			
+			// ToDo F L 이름이랑 주민번호, Dno는 Not Null
 			while (rs.next()) {
 				String name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
 		        String Ssn = rs.getString("E.Ssn");
@@ -120,17 +176,6 @@ public class Q2 {
 		        	supervisor = rs.getString("S.Fname") + " " + rs.getString("S.Minit") + " " + rs.getString("S.Lname");
 		        }
 		        String department = rs.getString("Dname");
-		        
-		        /*
-		        System.out.println(name + "  "
-		        				+ Ssn + "  "
-		        				+ Bdate + "  "
-		        				+ Address + "  "
-		        				+ Sex + "  "
-		        				+ Salary + "  "
-		        				+ supervisor + "  "
-		        				+ department);
-		        				*/
 		        
 		        Object[] data = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
 		        model.addRow(data);

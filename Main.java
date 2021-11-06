@@ -255,30 +255,34 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				int index = rangeCombo.getSelectedIndex();
 				switch(index) {
-				case 0:
+				case 0:	// 전체 검색
 					Q1 q1 = new Q1();
 					q1.ShowEmployee(model);
 					break;
 					
-				case 1:
-					Q2 q2 = new Q2();
-					q2.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem());
+				case 1:	// 부서 검색
+					Q2 q2d = new Q2();
+					q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem());
 					break;
 					
-				case 2:
-					System.out.println("성별 검색");
+				case 2:	// 성별 검색
+					Q2 q2sex = new Q2();
+					q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem());
 					break;
 					
-				case 3:
-					System.out.println("연봉 검색");
+				case 3:	// 연봉 검색
+					Q2 q2sal = new Q2();
+					q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText());
 					break;
 					
 				case 4:
-					System.out.println("생일 검색");
+					Q2 q2b = new Q2();
+					q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem());
 					break;
 					
 				case 5:
-					System.out.println("부하직원 검색");
+					Q2 q2sup = new Q2();
+					q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText());
 					break;
 					
 				default:
