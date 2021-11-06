@@ -18,17 +18,6 @@ public class DBConnector {
 			con = DriverManager.getConnection(url, user, pwd);
 			System.out.println("연결 성공");
 			
-			// 1. 전체 직원을 출력
-			// Q1.ShowEmployee(con);
-			
-			// 2. 검색 범위, 검색 항목 필터 적용 직원 검색
-			// Q2.ShowEmployeeAll(con);
-			// Q2.ShowEmployeeDpart(con, "Administration");
-			// Q2.ShowEmployeeSex(con, "M");
-			// Q2.ShowEmployeeSal(con, 39000);
-			// Q2.ShowEmployeeBirth(con, "11");
-			// Q2.ShowEmployeeSuper(con, "888665555");
-			
 			// 3. 선택한 직원 삭제
 			// Q3.DeleteEmployee(con, "11111111");
 			

@@ -5,7 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -62,6 +62,7 @@ public class Main {
 	private JLabel selectedLabel;
 	private JLabel countLabel;
 	private JButton searchButton;
+	private Vector<String> selectedColumn = new Vector<String>();
 	private JLabel tempLabel;
 	private JLabel updateLabel;
 	private String[] updateComboName = {"Address", "Sex", "Salary"};
@@ -111,7 +112,7 @@ public class Main {
 		
 		rangeCombo = new JComboBox(rangeComboName);
 		rangeCombo.addActionListener(new ActionListener() {
-			@Override
+			@Override // 검색 범위 필터
 			public void actionPerformed(ActionEvent e) {
 				JComboBox cb = (JComboBox) e.getSource();
 				int index = cb.getSelectedIndex();
@@ -253,7 +254,28 @@ public class Main {
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int index = rangeCombo.getSelectedIndex();
+				selectedColumn.clear(); // 열 이름 벡터 초기화
+				// 열 체크 확인
+				boolean[] isSelected = new boolean[]{
+						true,	// 체크박스 공간은 기본 추가
+						nameCheckBox.isSelected(),
+						ssnCheckBox.isSelected(),
+						bdateCheckBox.isSelected(),
+						addressCheckBox.isSelected(),
+						sexCheckBox.isSelected(),
+						salaryCheckBox.isSelected(),
+						supervisorCheckBox.isSelected(),
+						departmentCheckBox.isSelected()};
+				
+				for (int i = 0; i < 9; i++) {
+					if (isSelected[i]) {
+						selectedColumn.add(columnNames[i]); // 선택한 열만 벡터에 추가
+					}
+				}
+				
+				model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
+				
+				int index = rangeCombo.getSelectedIndex();	// 검색 범위 설정
 				switch(index) {
 				case 0:	// 전체 검색
 					Q1 q1 = new Q1();
