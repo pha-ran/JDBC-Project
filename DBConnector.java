@@ -38,14 +38,14 @@ public class DBConnector {
 	
 	public void DisConnect() {
 		// 연결 해제
-				try {
-					if (con != null) {
-						con.close();
-						System.out.println("연결 해제");
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}// SQL 연결 끝
+		try {
+			if (con != null) {
+				con.close();
+				System.out.println("연결 해제");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}// SQL 연결 끝
 	}
 	
 	public Connection getConnection() {

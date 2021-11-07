@@ -35,7 +35,7 @@ public class Q1 {
 		        }
 		        String department = rs.getString("Dname");
 		        
-		        Object[] data = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
+		        Object[] data = {name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
 		        model.addRow(data);
 			}
 			

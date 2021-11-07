@@ -164,7 +164,7 @@ public class Q2 {
 				model.removeRow(0);
 			}
 			
-			// ToDo F L 이름이랑 주민번호, Dno는 Not Null
+			// 결과를 변수와 매칭 (ToDo F L 이름이랑 주민번호, Dno는 Not Null)
 			while (rs.next()) {
 				String name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
 		        String Ssn = rs.getString("E.Ssn");
@@ -178,16 +178,15 @@ public class Q2 {
 		        }
 		        String department = rs.getString("Dname");
 		        
-		        Object[] dataList = {false, name, Ssn, Bdate, Address, Sex, Salary, supervisor, department};
+		        Object[] dataList = {name, Ssn, Bdate, Address, Sex, Salary, supervisor, department}; // 전체 데이터의 배열
 		        Vector<Object> data = new Vector<Object>();
-		        data.add(false); // isSelected의 첫번째는 true인데 행 체크박스는 false여야함
-		        for (int i = 1; i <= 8; i++) { // 두 번째 행부터 설정
+		        for (int i = 0; i < 8; i++) { // 두 번째 행부터 설정
 		        	if (isSelected[i]) {
-		        		data.add(dataList[i]);
+		        		data.add(dataList[i]); // 선택된 열의 값만 최종 데이터 벡터에 추가
 		        	}
 		        }
 		        
-		        model.addRow(data);
+		        model.addRow(data); // 테이블에 행 추가
 		    }
 		} catch (SQLException e) {
 			System.out.println("연결 실패");

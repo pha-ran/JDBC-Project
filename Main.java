@@ -6,7 +6,6 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -14,13 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -52,19 +47,17 @@ public class Main {
 	private JCheckBox salaryCheckBox;
 	private JCheckBox supervisorCheckBox;
 	private JCheckBox departmentCheckBox;
-	private String[] columnNames = new String[] { "선택", "NAME", "SSN", "BDATE", "ADDRESS", "SEX", "SALARY", "SUPERVISOR", "DEPARTMENT" };
+	private String[] columnNames = new String[] { "NAME", "SSN", "BDATE", "ADDRESS", "SEX", "SALARY", "SUPERVISOR", "DEPARTMENT" };
 	private JTable table;
 	private DefaultTableModel model;
 	private JScrollPane scrollPane;
-	private DefaultTableCellRenderer dcr;
-	private JCheckBox cellBox;
 	private Box sverticalBox;
 	private JPanel spanel_1;
 	private JPanel spanel_2;
 	private JLabel selectedLabel;
 	private JLabel countLabel;
 	private JButton searchButton;
-	private Vector<String> selectedColumn = new Vector<String>();
+	private Vector<Object> selectedColumn = new Vector<Object>();
 	private JLabel tempLabel;
 	private JLabel updateLabel;
 	private String[] updateComboName = {"Address", "Sex", "Salary"};
@@ -87,17 +80,19 @@ public class Main {
 		});
 	}
 
-	// 생성자, 이벤트 설정
+	// 생성자 - 화면 구성 후 초기 설정
 	public Main() {
 		initialize();
 		
-		rangeCombo.setSelectedIndex(0);
+		rangeCombo.setSelectedIndex(0); // 실행시 전체 선택 (default)
 	}
 
 	// 화면 구성
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1024, 672);
+		frame.setLocationRelativeTo(null); // 화면 가운데에 배치
+		frame.setResizable(false); // 창 크기 고정
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		npanel = new JPanel();
@@ -112,6 +107,7 @@ public class Main {
 		rangeLabel = new JLabel("검색 범위");
 		npanel_1.add(rangeLabel);
 		
+		// 검색 범위 콤보박스 설정
 		rangeCombo = new JComboBox(rangeComboName);
 		rangeCombo.addActionListener(new ActionListener() {
 			@Override // 검색 범위 필터
@@ -220,6 +216,7 @@ public class Main {
 		attLabel = new JLabel("검색 항목");
 		npanel_2.add(attLabel);
 		
+		// 체크박스 설정 (실행시 기본값은 true)
 		nameCheckBox = new JCheckBox("Name");
 		nameCheckBox.setSelected(true);
 		npanel_2.add(nameCheckBox);
@@ -251,15 +248,17 @@ public class Main {
 		departmentCheckBox = new JCheckBox("Department");
 		departmentCheckBox.setSelected(true);
 		npanel_2.add(departmentCheckBox);
+		// 체크박스 설정 완료
 		
+		// 검색 버튼 설정
 		searchButton = new JButton("검색");
 		searchButton.addActionListener(new ActionListener() {
-			@Override
+			@Override	// 검색 버튼이 눌릴 경우
 			public void actionPerformed(ActionEvent e) {
 				selectedColumn.clear(); // 열 이름 벡터 초기화
-				// 열 체크 확인
+				
+				// 열 체크 확인 (체크된 열 인덱스 true)
 				boolean[] isSelected = new boolean[]{
-						true,	// 체크박스 공간은 기본 추가
 						nameCheckBox.isSelected(),
 						ssnCheckBox.isSelected(),
 						bdateCheckBox.isSelected(),
@@ -269,32 +268,34 @@ public class Main {
 						supervisorCheckBox.isSelected(),
 						departmentCheckBox.isSelected()};
 				
-				for (int i = 0; i < 9; i++) {
-					if (isSelected[i]) {
-						selectedColumn.add(columnNames[i]); // 선택한 열만 벡터에 추가
+				for (int i = 0; i < 8; i++) {
+					if (isSelected[i]) {	// 열 이름 배열에서 선택한 열만 벡터에 추가
+						selectedColumn.add(columnNames[i]);
 					}
 				}
 				
 				model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 				
-				int index = rangeCombo.getSelectedIndex();	// 검색 범위에 따른 API 호출
+				int index = rangeCombo.getSelectedIndex(); // 검색 범위 선택 확인
+				
+				// 검색 범위 선택에 따른 API 호출
 				switch(index) {
 				case 0:	// 전체 검색
 					Q1 q1 = new Q1();
 					q1.ShowEmployee(model);
 					break;
 					
-				case 1:	// 부서 검색
+				case 1:	// 부서 검색 (인자로 선택한 부서 전달)
 					Q2 q2d = new Q2();
 					q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem(), isSelected);
 					break;
 					
-				case 2:	// 성별 검색
+				case 2:	// 성별 검색 (인자로 선택한 성별 전달)
 					Q2 q2sex = new Q2();
 					q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem(), isSelected);
 					break;
 					
-				case 3:	// 연봉 검색
+				case 3:	// 입력값보다 연봉이 높은 직원 검색 (인자로 입력한 연봉 전달)
 					Q2 q2sal = new Q2();
 					q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText(), isSelected);
 					break;
@@ -304,19 +305,19 @@ public class Main {
 					q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem(), isSelected);
 					break;
 					
-				case 5:	// 부하직원 검색
+				case 5:	// 입력한 주민번호를 가진 직원의 부하직원 검색 (인자로 입력한 주민번호 전달)
 					Q2 q2sup = new Q2();
 					q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText(), isSelected);
 					break;
 					
 				default:
-					// model.fireTableDataChanged();
 					break;
 				}
 			}
 		});
 		npanel_2.add(searchButton);
 		
+		// 테이블 설정
 		model = new DefaultTableModel(null, columnNames) {
 			private static final long serialVersionUID = 1L;
 			// 테이블 원소 더블클릭 후 수정 금지
@@ -324,20 +325,9 @@ public class Main {
 				return false;
 			}};
 		table = new JTable(model);
-		dcr = new DefaultTableCellRenderer(){
-			private static final long serialVersionUID = 1L;
-
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				JCheckBox box= new JCheckBox();
-				box.setSelected(((Boolean)value).booleanValue());  
-				box.setHorizontalAlignment(JLabel.CENTER);
-				return box;
-			}};
-		table.getColumn("선택").setCellRenderer(dcr);
-		cellBox = new JCheckBox();
-		table.getColumn("선택").setCellEditor(new DefaultCellEditor(cellBox));
 		scrollPane = new JScrollPane(table);
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		// 실행시 전체 데이터 검색
 		Q1 q1 = new Q1();
 		q1.ShowEmployee(model);
 		
@@ -347,20 +337,20 @@ public class Main {
 		sverticalBox = Box.createVerticalBox();
 		spanel.add(sverticalBox);
 		
-		spanel_1 = new JPanel();
-		sverticalBox.add(spanel_1);
+		// spanel_1 = new JPanel();
+		// sverticalBox.add(spanel_1);
 		
-		selectedLabel = new JLabel("선택한 직원 : ");
-		spanel_1.add(selectedLabel);
+		// selectedLabel = new JLabel("선택한 직원 : ");
+		// spanel_1.add(selectedLabel);
 		
 		spanel_2 = new JPanel();
 		sverticalBox.add(spanel_2);
 		
-		countLabel = new JLabel("인원수 : ");
-		spanel_2.add(countLabel);
+		// countLabel = new JLabel("인원수 : ");
+		// spanel_2.add(countLabel);
 		
-		tempLabel = new JLabel("0");
-		spanel_2.add(tempLabel);
+		// tempLabel = new JLabel("0");
+		// spanel_2.add(tempLabel);
 		
 		updateLabel = new JLabel("선택한 데이터 수정 : ");
 		spanel_2.add(updateLabel);
@@ -373,48 +363,23 @@ public class Main {
 		textField.setColumns(10);
 		
 		updateButton = new JButton("UPDATE");
+		updateButton.addActionListener(new ActionListener() {
+			@Override	// 선택된 셀들의 인덱스 콘솔에 출력
+			public void actionPerformed(ActionEvent e) {
+				int[] index = table.getSelectedRows();
+				for (int i = 0; i < index.length; i++) {
+					System.out.println(index[i]);
+				}
+			}
+		});
 		spanel_2.add(updateButton);
 		
+		// 데이터 추가 버튼
 		addButton = new JButton("새로운 데이터 추가");
 		spanel_2.add(addButton);
 		
+		// 데이터 삭제 버튼
 		deleteButton = new JButton("선택한 데이터 삭제");
 		spanel_2.add(deleteButton);
 	}
-	
-	/*
-	private class TableCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		public TableCell() {
-			cellBox = new JCheckBox();
-			
-			cellBox.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					System.out.println(table.getValueAt(table.getSelectedRow(), 1));
-				}
-			});
-		}
-		
-		@Override
-		public Object getCellEditorValue() {
-			return cellBox;
-		}
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-				int row, int column) {
-			cellBox.setSelected(((Boolean)value).booleanValue());
-			cellBox.setHorizontalAlignment(JLabel.CENTER);
-			return cellBox;
-		}
-
-		@Override
-		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-			return cellBox;
-		}
-	}
-	*/
 }
