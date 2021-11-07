@@ -51,6 +51,7 @@ public class Main {
 	private JTable table;
 	private DefaultTableModel model;
 	private JScrollPane scrollPane;
+	private Vector<String> ssnVec;
 	private Box sverticalBox;
 	private JPanel spanel_1;
 	private JPanel spanel_2;
@@ -282,32 +283,32 @@ public class Main {
 				switch(index) {
 				case 0:	// 전체 검색
 					Q1 q1 = new Q1();
-					q1.ShowEmployee(model);
+					ssnVec = q1.ShowEmployee(model, isSelected);
 					break;
 					
 				case 1:	// 부서 검색 (인자로 선택한 부서 전달)
 					Q2 q2d = new Q2();
-					q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem(), isSelected);
+					ssnVec = q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 2:	// 성별 검색 (인자로 선택한 성별 전달)
 					Q2 q2sex = new Q2();
-					q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem(), isSelected);
+					ssnVec = q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 3:	// 입력값보다 연봉이 높은 직원 검색 (인자로 입력한 연봉 전달)
 					Q2 q2sal = new Q2();
-					q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText(), isSelected);
+					ssnVec = q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText(), isSelected);
 					break;
 					
 				case 4: // 생월 검색
 					Q2 q2b = new Q2();
-					q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem(), isSelected);
+					ssnVec = q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 5:	// 입력한 주민번호를 가진 직원의 부하직원 검색 (인자로 입력한 주민번호 전달)
 					Q2 q2sup = new Q2();
-					q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText(), isSelected);
+					ssnVec = q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText(), isSelected);
 					break;
 					
 				default:
@@ -329,7 +330,8 @@ public class Main {
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 		// 실행시 전체 데이터 검색
 		Q1 q1 = new Q1();
-		q1.ShowEmployee(model);
+		boolean[] defaultColumn = new boolean[] {true, true, true, true, true, true, true, true};
+		ssnVec = q1.ShowEmployee(model, defaultColumn);
 		
 		JPanel spanel = new JPanel();
 		frame.getContentPane().add(spanel, BorderLayout.SOUTH);
@@ -364,11 +366,11 @@ public class Main {
 		
 		updateButton = new JButton("UPDATE");
 		updateButton.addActionListener(new ActionListener() {
-			@Override	// 선택된 셀들의 인덱스 콘솔에 출력
+			@Override	// 선택된 셀들의 인덱스에 해당하는 ssnVec의 값을 콘솔에 출력
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
 				for (int i = 0; i < index.length; i++) {
-					System.out.println(index[i]);
+					System.out.println(ssnVec.get(index[i]));
 				}
 			}
 		});

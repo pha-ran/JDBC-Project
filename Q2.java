@@ -11,7 +11,7 @@ public class Q2 {
 	static String baseQuery = "SELECT * "
 			+ "FROM (EMPLOYEE AS E LEFT OUTER JOIN EMPLOYEE AS S ON E.Super_ssn = S.Ssn) JOIN DEPARTMENT ON E.Dno = Dnumber ";
 	
-	public void ShowEmployeeDpart(DefaultTableModel model, String s, boolean[] isSelected) {
+	public Vector<String> ShowEmployeeDpart(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -22,7 +22,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model, isSelected);
+			Vector<String> ssnVec = printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -34,13 +34,18 @@ public class Q2 {
 			}
 			
 			db.DisConnect(); // 연결 해제
+
+			return ssnVec;
+				
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void ShowEmployeeSex(DefaultTableModel model, String s, boolean[] isSelected) {
+	public Vector<String> ShowEmployeeSex(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -51,7 +56,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model, isSelected);
+			Vector<String> ssnVec = printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -63,13 +68,18 @@ public class Q2 {
 			}
 						
 			db.DisConnect(); // 연결 해제
+
+			return ssnVec;
+				
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void ShowEmployeeSal(DefaultTableModel model, String s, boolean[] isSelected) {
+	public Vector<String> ShowEmployeeSal(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -80,7 +90,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model, isSelected);
+			Vector<String> ssnVec = printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -92,13 +102,18 @@ public class Q2 {
 			}
 									
 			db.DisConnect(); // 연결 해제
+
+			return ssnVec;
+				
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void ShowEmployeeBirth(DefaultTableModel model, String s, boolean[] isSelected) {
+	public Vector<String> ShowEmployeeBirth(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -110,7 +125,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model, isSelected);
+			Vector<String> ssnVec = printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -122,13 +137,18 @@ public class Q2 {
 			}
 									
 			db.DisConnect(); // 연결 해제
+			
+			return ssnVec;
+			
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void ShowEmployeeSuper(DefaultTableModel model, String s, boolean[] isSelected) {
+	public Vector<String> ShowEmployeeSuper(DefaultTableModel model, String s, boolean[] isSelected) {
 		try {
 			DBConnector db = new DBConnector();
 			db.Connect(); // 연결 시도
@@ -139,7 +159,7 @@ public class Q2 {
 			
 			ResultSet rs = pstm.executeQuery();
 			
-			printResult(rs, model, isSelected);
+			Vector<String> ssnVec = printResult(rs, model, isSelected);
 			
 			// 수행 후 해제
 			if (pstm != null) {
@@ -151,18 +171,25 @@ public class Q2 {
 			}
 									
 			db.DisConnect(); // 연결 해제
+			
+			return ssnVec;
+					
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void printResult(ResultSet rs, DefaultTableModel model, boolean[] isSelected) {
+	public Vector<String> printResult(ResultSet rs, DefaultTableModel model, boolean[] isSelected) {
 		try {
 			// 테이블의 기존 데이터 삭제
 			for (int i = 0; i < model.getRowCount();) {
 				model.removeRow(0);
 			}
+			
+			Vector<String> ssnVec = new Vector<String>();
 			
 			// 결과를 변수와 매칭 (ToDo F L 이름이랑 주민번호, Dno는 Not Null)
 			while (rs.next()) {
@@ -180,17 +207,23 @@ public class Q2 {
 		        
 		        Object[] dataList = {name, Ssn, Bdate, Address, Sex, Salary, supervisor, department}; // 전체 데이터의 배열
 		        Vector<Object> data = new Vector<Object>();
-		        for (int i = 0; i < 8; i++) { // 두 번째 행부터 설정
+		        for (int i = 0; i < 8; i++) {
 		        	if (isSelected[i]) {
 		        		data.add(dataList[i]); // 선택된 열의 값만 최종 데이터 벡터에 추가
 		        	}
 		        }
 		        
 		        model.addRow(data); // 테이블에 행 추가
+		        ssnVec.add(Ssn); // 리턴할 Ssn 벡터에 검색된 행의 Ssn 추가
 		    }
+			
+			return ssnVec; // 쿼리 종료 후 Ssn 벡터 리턴
+			
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 }
