@@ -63,7 +63,7 @@ public class Main {
 	private JLabel updateLabel;
 	private String[] updateComboName = {"Address", "Sex", "Salary"};
 	private JComboBox updateCombo;
-	private JTextField textField;
+	private JTextField updateDataField;
 	private JButton updateButton;
 	private JButton addButton;
 	private JButton deleteButton;
@@ -360,18 +360,23 @@ public class Main {
 		updateCombo = new JComboBox(updateComboName);
 		spanel_2.add(updateCombo);
 		
-		textField = new JTextField();
-		spanel_2.add(textField);
-		textField.setColumns(10);
+		updateDataField = new JTextField();
+		spanel_2.add(updateDataField);
+		updateDataField.setColumns(10);
 		
 		updateButton = new JButton("UPDATE");
 		updateButton.addActionListener(new ActionListener() {
-			@Override	// 선택된 셀들의 인덱스에 해당하는 ssnVec의 값을 콘솔에 출력
+			@Override	// 선택된 셀들의 선택된 항목을 입력한 값으로 수정
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
+				Q4 q4 = new Q4();
+				String set = (String) updateCombo.getSelectedItem();
+				String data = updateDataField.getText();
 				for (int i = 0; i < index.length; i++) {
-					System.out.println(ssnVec.get(index[i]));
+					q4.UpdateEmployee(set, data, ssnVec.get(index[i]));
 				}
+				updateDataField.setText("");
+				searchButton.doClick();
 			}
 		});
 		spanel_2.add(updateButton);
@@ -382,6 +387,17 @@ public class Main {
 		
 		// 데이터 삭제 버튼
 		deleteButton = new JButton("선택한 데이터 삭제");
+		deleteButton.addActionListener(new ActionListener() {
+			@Override	// 선택된 셀들을 삭제
+			public void actionPerformed(ActionEvent e) {
+				int[] index = table.getSelectedRows();
+				Q3 q3 = new Q3();
+				for (int i = 0; i < index.length; i++) {
+					q3.DeleteEmployee(ssnVec.get(index[i]));
+				}
+				searchButton.doClick();
+			}
+		});
 		spanel_2.add(deleteButton);
 	}
 }
