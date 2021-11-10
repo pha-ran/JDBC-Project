@@ -10,6 +10,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
@@ -19,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import java.awt.Font;
 
 public class Main {
 
@@ -339,11 +341,11 @@ public class Main {
 		sverticalBox = Box.createVerticalBox();
 		spanel.add(sverticalBox);
 		
-		// spanel_1 = new JPanel();
-		// sverticalBox.add(spanel_1);
+		spanel_1 = new JPanel();
+		sverticalBox.add(spanel_1);
 		
-		// selectedLabel = new JLabel("선택한 직원 : ");
-		// spanel_1.add(selectedLabel);
+		selectedLabel = new JLabel("마우스 클릭으로 행 선택, 컨트롤을 누른 상태로 클릭하면 다중 행 선택 가능");
+		spanel_1.add(selectedLabel);
 		
 		spanel_2 = new JPanel();
 		sverticalBox.add(spanel_2);
@@ -383,6 +385,12 @@ public class Main {
 		
 		// 데이터 추가 버튼
 		addButton = new JButton("새로운 데이터 추가");
+		addButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "새로운 데이터 추가");
+			}
+		});
 		spanel_2.add(addButton);
 		
 		// 데이터 삭제 버튼
