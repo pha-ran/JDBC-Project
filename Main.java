@@ -296,8 +296,15 @@ public class Main {
 					break;
 					
 				case 3:	// 입력값보다 연봉이 높은 직원 검색 (인자로 입력한 연봉 전달)
-					Q2 q2sal = new Q2();
-					ssnVec = q2sal.ShowEmployeeSal(model, (String) salaryTextField.getText(), isSelected);
+					String sal = (String) salaryTextField.getText();
+					if (Pattern.matches("^[0-9]{1,10}(\\.[0-9]{1,2})?$", sal) != true) {
+						JOptionPane.showMessageDialog(null, "Salary는 숫자 10자리 이하, 소수점은 0~2자리로 입력해주세요.");
+						return;
+					}
+					else {
+						Q2 q2sal = new Q2();
+						ssnVec = q2sal.ShowEmployeeSal(model, sal, isSelected);
+					}
 					break;
 					
 				case 4: // 생월 검색
@@ -306,8 +313,20 @@ public class Main {
 					break;
 					
 				case 5:	// 입력한 주민번호를 가진 직원의 부하직원 검색 (인자로 입력한 주민번호 전달)
+					String jun = (String) juniorTextField.getText();
+					if (Pattern.matches("^[0-9]{9}$", jun) != true) {
+						JOptionPane.showMessageDialog(null, "Ssn은 숫자 9자리로 입력해주세요.");
+						return;
+					}
+					
+					Q5 q5 = new Q5();
+					if (q5.isExistSsn(jun) < 1) {
+						JOptionPane.showMessageDialog(null, "존재하지 않는 직원의 ssn입니다.");
+						return;
+					}
+					
 					Q2 q2sup = new Q2();
-					ssnVec = q2sup.ShowEmployeeSuper(model, (String) juniorTextField.getText(), isSelected);
+					ssnVec = q2sup.ShowEmployeeSuper(model, jun, isSelected);
 					break;
 					
 				default:
@@ -413,6 +432,28 @@ public class Main {
 				}
 				else {	// 주소 또는 연봉 수정
 					String data = updateDataField.getText();
+					
+					if (set.equals("Address")) {	// 주소 수정
+						if (Pattern.matches("^.{0,30}$", data) != true) {
+							JOptionPane.showMessageDialog(null, "Address는 0~30글자로 입력해주세요.");
+							return;
+						}
+						if (data.equals("")) {
+							data = null;
+						}
+					}
+					else {	// 연봉 수정
+						if (Pattern.matches("^[0-9]{1,10}(\\.[0-9]{1,2})?$", data) != true) {
+							if (data.equals("")) {
+								data = null;
+							}
+							else {
+								JOptionPane.showMessageDialog(null, "Salary는 숫자 10자리 이하, 소수점은 0~2자리로 입력해주세요.");
+								return;
+							}
+						}
+					}
+					
 					for (int i = 0; i < index.length; i++) {
 						q4.UpdateEmployee(set, data, ssnVec.get(index[i]));
 					}
