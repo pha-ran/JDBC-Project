@@ -5,13 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Q5 {
-	public static void InsertEmployee(Connection con, String F, String M, String L, String Ssn, String B,
-														String A, String Sex, String Sal, String Sup_ssn, String Dno) {
+	public void InsertEmployee(String F, String M, String L, String Ssn, String B,
+										String A, String Sex, String Sal, String Sup_ssn, String Dno) {
 		try {
+			DBConnector db = new DBConnector();
+			db.Connect(); // 연결 시도
+			
 			String query = "INSERT INTO EMPLOYEE(Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Super_ssn, Dno) "
 					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
-			PreparedStatement pstm = con.prepareStatement(query);
+			PreparedStatement pstm = db.getConnection().prepareStatement(query);
 			pstm.setString(1, F);
 			pstm.setString(2, M);
 			pstm.setString(3, L);
@@ -33,6 +36,8 @@ public class Q5 {
 					e.printStackTrace();
 				}
 			}
+			
+			db.DisConnect(); // 연결 해제
 		} catch (SQLException e) {
 			System.out.println("연결 실패");
 			e.printStackTrace();

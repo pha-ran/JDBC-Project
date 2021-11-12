@@ -15,12 +15,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import java.awt.Font;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -66,6 +65,8 @@ public class Main {
 	private String[] updateComboName = {"Address", "Sex", "Salary"};
 	private JComboBox updateCombo;
 	private JTextField updateDataField;
+	private String[] updateSexComboName = {"M", "F"};
+	private JComboBox updateSexCombo;
 	private JButton updateButton;
 	private JButton addButton;
 	private JButton deleteButton;
@@ -88,6 +89,7 @@ public class Main {
 		initialize();
 		
 		rangeCombo.setSelectedIndex(0); // 실행시 전체 선택 (default)
+		updateCombo.setSelectedIndex(0); // 실행시 주소 선택 (default)
 	}
 
 	// 화면 구성
@@ -185,11 +187,6 @@ public class Main {
 					break;
 					
 				default:
-					departmentCombo.setVisible(false);
-					sexCombo.setVisible(false);
-					salaryTextField.setVisible(false);
-					bdateCombo.setVisible(false);
-					juniorTextField.setVisible(false);
 					break;
 				}
 			}
@@ -350,21 +347,56 @@ public class Main {
 		spanel_2 = new JPanel();
 		sverticalBox.add(spanel_2);
 		
-		// countLabel = new JLabel("인원수 : ");
-		// spanel_2.add(countLabel);
-		
-		// tempLabel = new JLabel("0");
-		// spanel_2.add(tempLabel);
-		
 		updateLabel = new JLabel("선택한 데이터 수정 : ");
 		spanel_2.add(updateLabel);
 		
+		// 수정할 열 선택 콤보박스 설정
 		updateCombo = new JComboBox(updateComboName);
+		updateCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				int index = cb.getSelectedIndex();
+				
+				// 전체 VIsible
+				updateDataField.setVisible(true);
+				updateSexCombo.setVisible(true);
+				
+				switch(index) {
+				case 0:	// 주소 선택
+					updateDataField.setVisible(true);
+					updateSexCombo.setVisible(false);
+					
+					updateDataField.setText("");
+					break;
+					
+				case 1:	// 성별 선택
+					updateDataField.setVisible(false);
+					updateSexCombo.setVisible(true);
+					
+					updateSexCombo.setSelectedIndex(0);
+					break;
+					
+				case 2:	// 급여 선택
+					updateDataField.setVisible(true);
+					updateSexCombo.setVisible(false);
+					
+					updateDataField.setText("0");
+					break;
+					
+				default:
+					break;
+				}
+			}
+		});
 		spanel_2.add(updateCombo);
 		
 		updateDataField = new JTextField();
 		spanel_2.add(updateDataField);
 		updateDataField.setColumns(10);
+		
+		updateSexCombo = new JComboBox(updateSexComboName);
+		spanel_2.add(updateSexCombo);
 		
 		updateButton = new JButton("UPDATE");
 		updateButton.addActionListener(new ActionListener() {
@@ -373,9 +405,17 @@ public class Main {
 				int[] index = table.getSelectedRows();
 				Q4 q4 = new Q4();
 				String set = (String) updateCombo.getSelectedItem();
-				String data = updateDataField.getText();
-				for (int i = 0; i < index.length; i++) {
-					q4.UpdateEmployee(set, data, ssnVec.get(index[i]));
+				if (set == "Sex") {	// 성별 수정
+					String data = (String) updateSexCombo.getSelectedItem();
+					for (int i = 0; i < index.length; i++) {
+						q4.UpdateEmployee(set, data, ssnVec.get(index[i]));
+					}
+				}
+				else {	// 주소 또는 연봉 수정
+					String data = updateDataField.getText();
+					for (int i = 0; i < index.length; i++) {
+						q4.UpdateEmployee(set, data, ssnVec.get(index[i]));
+					}
 				}
 				updateDataField.setText("");
 				searchButton.doClick();
@@ -383,12 +423,13 @@ public class Main {
 		});
 		spanel_2.add(updateButton);
 		
-		// 데이터 추가 버튼
-		addButton = new JButton("새로운 데이터 추가");
+		// 직원 정보 추가 버튼
+		addButton = new JButton("새로운 직원 정보 추가");
 		addButton.addActionListener(new ActionListener() {
-			@Override
+			@Override	// InsertEmployeeGUI 생성
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "새로운 데이터 추가");
+				InsertEmployeeGUI insertGUI = new InsertEmployeeGUI();
+				insertGUI.insertFrame.setVisible(true);
 			}
 		});
 		spanel_2.add(addButton);
@@ -396,7 +437,7 @@ public class Main {
 		// 데이터 삭제 버튼
 		deleteButton = new JButton("선택한 데이터 삭제");
 		deleteButton.addActionListener(new ActionListener() {
-			@Override	// 선택된 셀들을 삭제
+			@Override	// 선택된 셀들을 삭제, ToDo 삭제시 삭제한 ssn이 super_ssn인 행 찾아서 null로 변경
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
 				Q3 q3 = new Q3();
