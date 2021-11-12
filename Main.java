@@ -405,7 +405,7 @@ public class Main {
 				int[] index = table.getSelectedRows();
 				Q4 q4 = new Q4();
 				String set = (String) updateCombo.getSelectedItem();
-				if (set == "Sex") {	// 성별 수정
+				if (set.equals("Sex")) { // 성별 수정
 					String data = (String) updateSexCombo.getSelectedItem();
 					for (int i = 0; i < index.length; i++) {
 						q4.UpdateEmployee(set, data, ssnVec.get(index[i]));

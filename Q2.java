@@ -191,17 +191,28 @@ public class Q2 {
 			
 			Vector<String> ssnVec = new Vector<String>();
 			
-			// 결과를 변수와 매칭 (ToDo F L 이름이랑 주민번호, Dno는 Not Null)
+			// 결과를 변수와 매칭
 			while (rs.next()) {
-				String name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
+				String name;
+		        if (rs.getString("E.Minit") != null) {
+		        	name = rs.getString("E.Fname") + " " + rs.getString("E.Minit") + " " + rs.getString("E.Lname");
+		        }
+		        else {
+		        	name = rs.getString("E.Fname") + " " + rs.getString("E.Lname");
+		        }
 		        String Ssn = rs.getString("E.Ssn");
 		        String Bdate = rs.getString("E.Bdate");
 		        String Address = rs.getString("E.Address");
 		        String Sex = rs.getString("E.Sex");
-		        Double Salary = rs.getDouble("E.Salary");
+		        String Salary = rs.getString("E.Salary");
 		        String supervisor = null;
-		        if (rs.getString("S.Fname") != null && rs.getString("S.Minit") != null && rs.getString("S.Lname") != null) {
-		        	supervisor = rs.getString("S.Fname") + " " + rs.getString("S.Minit") + " " + rs.getString("S.Lname");
+		        if (rs.getString("E.Super_ssn") != null) {
+		        	if (rs.getString("S.Minit") != null) {
+		        		supervisor = rs.getString("S.Fname") + " " + rs.getString("S.Minit") + " " + rs.getString("S.Lname");
+		        	}
+		        	else {
+		        		supervisor = rs.getString("S.Fname") + " " + rs.getString("S.Lname");
+		        	}
 		        }
 		        String department = rs.getString("Dname");
 		        
