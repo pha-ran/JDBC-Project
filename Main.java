@@ -360,7 +360,7 @@ public class Main {
 		spanel_1 = new JPanel();
 		sverticalBox.add(spanel_1);
 		
-		selectedLabel = new JLabel("마우스 클릭으로 행 선택, 컨트롤을 누른 상태로 클릭하면 다중 행 선택 가능");
+		selectedLabel = new JLabel("마우스 클릭으로 행 선택, 드래그하거나 컨트롤을 누른 상태로 클릭하면 다중 행 선택 가능");
 		spanel_1.add(selectedLabel);
 		
 		spanel_2 = new JPanel();
@@ -422,6 +422,12 @@ public class Main {
 			@Override	// 선택된 셀들의 선택된 항목을 입력한 값으로 수정
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
+				
+				if (index.length == 0) {
+					JOptionPane.showMessageDialog(null, "선택된 직원이 없습니다. 마우스 클릭, 드래그, 또는 컨트롤을 누른 상태로 클릭하여 직원 선택이 가능합니다.");
+					return;
+				}
+				
 				Q4 q4 = new Q4();
 				String set = (String) updateCombo.getSelectedItem();
 				if (set.equals("Sex")) { // 성별 수정
@@ -460,6 +466,7 @@ public class Main {
 				}
 				updateDataField.setText("");
 				searchButton.doClick();
+				JOptionPane.showMessageDialog(null, "수정되었습니다.");
 			}
 		});
 		spanel_2.add(updateButton);
@@ -481,11 +488,33 @@ public class Main {
 			@Override	// 선택된 셀들을 삭제, ToDo 삭제시 삭제한 ssn이 super_ssn인 행 찾아서 null로 변경
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
+				
+				if (index.length == 0) {
+					JOptionPane.showMessageDialog(null, "선택된 직원이 없습니다. 마우스 클릭, 드래그, 또는 컨트롤을 누른 상태로 클릭하여 직원 선택이 가능합니다.");
+					return;
+				}
+				
 				Q3 q3 = new Q3();
+				
+				for (int i = 0; i < index.length; i++) {
+					if (q3.isManager(ssnVec.get(index[i])) > 0) {
+						JOptionPane.showMessageDialog(null, "부서의 매니저인 직원이 포함되어있어 삭제할 수 없습니다.");
+						return;
+					}
+				}
+				
+				for (int i = 0; i < index.length; i++) {
+					if (q3.isSuper(ssnVec.get(index[i])) > 0) {
+						JOptionPane.showMessageDialog(null, "다른 직원의 직속상사인 직원이 포함되어있어 삭제할 수 없습니다.");
+						return;
+					}
+				}
+				
 				for (int i = 0; i < index.length; i++) {
 					q3.DeleteEmployee(ssnVec.get(index[i]));
 				}
 				searchButton.doClick();
+				JOptionPane.showMessageDialog(null, "삭제되었습니다.");
 			}
 		});
 		spanel_2.add(deleteButton);
