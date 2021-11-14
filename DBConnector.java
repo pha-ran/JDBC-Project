@@ -18,15 +18,6 @@ public class DBConnector {
 			con = DriverManager.getConnection(url, user, pwd);
 			System.out.println("연결 성공");
 			
-			// 3. 선택한 직원 삭제
-			// Q3.DeleteEmployee(con, "11111111");
-			
-			// 4. 선택한 직원 수정
-			// Q4.UpdateEmployee(con, "978dhjbdfsj", "M", "99999", "11111111");
-			
-			// 5. 새로운 직원 추가
-			// Q5.InsertEmployee(con, "aaa", "B", "ccc", "11111111", "1919-11-22", "456 sadf", "F", "45678", null, "1");
-			
 		} catch (SQLException e) {
 			System.err.println("연결 실패");
 			e.printStackTrace();

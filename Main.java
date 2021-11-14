@@ -183,7 +183,7 @@ public class Main {
 					bdateCombo.setVisible(false);
 					juniorTextField.setVisible(true);
 					
-					juniorTextField.setText("0");
+					juniorTextField.setText("000000000");
 					break;
 					
 				default:
@@ -274,23 +274,24 @@ public class Main {
 					}
 				}
 				
-				model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
-				
 				int index = rangeCombo.getSelectedIndex(); // 검색 범위 선택 확인
 				
 				// 검색 범위 선택에 따른 API 호출
 				switch(index) {
 				case 0:	// 전체 검색
+					model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 					Q1 q1 = new Q1();
 					ssnVec = q1.ShowEmployee(model, isSelected);
 					break;
 					
 				case 1:	// 부서 검색 (인자로 선택한 부서 전달)
+					model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 					Q2 q2d = new Q2();
 					ssnVec = q2d.ShowEmployeeDpart(model, (String) departmentCombo.getSelectedItem(), isSelected);
 					break;
 					
 				case 2:	// 성별 검색 (인자로 선택한 성별 전달)
+					model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 					Q2 q2sex = new Q2();
 					ssnVec = q2sex.ShowEmployeeSex(model, (String) sexCombo.getSelectedItem(), isSelected);
 					break;
@@ -302,12 +303,14 @@ public class Main {
 						return;
 					}
 					else {
+						model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 						Q2 q2sal = new Q2();
 						ssnVec = q2sal.ShowEmployeeSal(model, sal, isSelected);
 					}
 					break;
 					
 				case 4: // 생월 검색
+					model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 					Q2 q2b = new Q2();
 					ssnVec = q2b.ShowEmployeeBirth(model, (String) bdateCombo.getSelectedItem(), isSelected);
 					break;
@@ -325,6 +328,7 @@ public class Main {
 						return;
 					}
 					
+					model.setColumnIdentifiers(selectedColumn); // 선택한 열만 테이블에 설정
 					Q2 q2sup = new Q2();
 					ssnVec = q2sup.ShowEmployeeSuper(model, jun, isSelected);
 					break;
@@ -417,6 +421,7 @@ public class Main {
 		updateSexCombo = new JComboBox(updateSexComboName);
 		spanel_2.add(updateSexCombo);
 		
+		// 수정 버튼 설정
 		updateButton = new JButton("UPDATE");
 		updateButton.addActionListener(new ActionListener() {
 			@Override	// 선택된 셀들의 선택된 항목을 입력한 값으로 수정
@@ -485,7 +490,7 @@ public class Main {
 		// 데이터 삭제 버튼
 		deleteButton = new JButton("선택한 데이터 삭제");
 		deleteButton.addActionListener(new ActionListener() {
-			@Override	// 선택된 셀들을 삭제, ToDo 삭제시 삭제한 ssn이 super_ssn인 행 찾아서 null로 변경
+			@Override	// 선택된 셀들을 삭제
 			public void actionPerformed(ActionEvent e) {
 				int[] index = table.getSelectedRows();
 				
